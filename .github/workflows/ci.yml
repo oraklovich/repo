@@ -1,0 +1,28 @@
+name: Python CI # Название workflow
+
+on: # События, которые запускают workflow
+  push: # При пуше в любую ветку
+    branches: [ main ]
+  pull_request: # И при создании Pull Request
+    branches: [ main ]
+
+jobs: # Задачи, которые нужно выполнить
+  test: # Задача "test"
+    runs-on: ubuntu-latest # На какой ОС запускать
+
+    steps: # Шаги выполнения
+    - name: Checkout code # Шаг 1: Получить код из репозитория
+      uses: actions/checkout@v4
+
+    - name: Set up Python # Шаг 2: Установить Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.11'
+
+    - name: Install dependencies # Шаг 3: Установить зависимости
+      run: |
+        pip install -r requirements.txt
+
+    - name: Run tests # Шаг 4: Запустить тесты (если они есть)
+      run: |
+        python -m pytest -v
