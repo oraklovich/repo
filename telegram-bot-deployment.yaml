@@ -1,0 +1,42 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: telegram-bot
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: telegram-bot
+  template:
+    metadata:
+      labels:
+        app: telegram-bot
+    spec:
+      containers:
+      - name: bot
+        image: telegram-bot
+        imagePullPolicy: Never
+        env:
+          # Достаем токен из Secret'а
+          - name: TELEGRAM_TOKEN
+            valueFrom:
+              secretKeyRef:
+                name: telegram-bot-secret
+                key: telegram-token
+          # URL нашего веб-сервиса (внутренний DNS Kubernetes!)
+          - name: CHECKER_SERVICE_URL
+            value: "http://website-checker-service:5000/check"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: telegram-bot-service
+spec:
+  selector:
+    app: telegram-bot
+  # Сервис для бота не нуждается во внешнем доступе, 
+  # он только исходящие подключения к Telegram API делает
+  type: ClusterIP
+  ports:
+    - port: 80
+      targetPort: 80

@@ -1,0 +1,13 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: website-checker-job
+spec:
+  template:
+    spec:
+      containers:
+      - name: website-checker
+        image: website-checker:latest
+        imagePullPolicy: Never # Используем локальный образ из Minikube
+      restartPolicy: Never # Важно! Не перезапускать контейнер после успешного завершения.
+  backoffLimit: 1 # Сколько раз пытаться перезапустить Job при сбое

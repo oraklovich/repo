@@ -1,0 +1,39 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: football-bot
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: football-bot
+  template:
+    metadata:
+      labels:
+        app: football-bot
+    spec:
+      containers:
+      - name: bot
+        image: football-bot
+        imagePullPolicy: Never
+        env:
+          - name: TELEGRAM_TOKEN
+            valueFrom:
+              secretKeyRef:
+                name: football-bot-secret
+                key: telegram-token
+          - name: SCORES_API_URL
+            value: "http://scores-parser-service:5001"
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: football-bot-service
+spec:
+  selector:
+    app: football-bot
+  type: ClusterIP
+  ports:
+    - port: 80
+      targetPort: 80

@@ -1,0 +1,33 @@
+# Определяем Deployment
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: website-checker-deployment # Уникальное имя нашего Deployment
+spec:
+  replicas: 1 # Запустить 1 копию (pod) нашего приложения
+  selector:
+    matchLabels:
+      app: website-checker # Этот Deployment управляет подами с этим лейблом
+  template: # Шаблон для создания Pod'ов
+    metadata:
+      labels:
+        app: website-checker # Лейбл, по которому Deployment находит свои поды
+    spec: # Спецификация для контейнеров внутри пода
+      containers:
+      - name: website-checker-container # Имя контейнера внутри пода
+        image: website-checker:latest # Имя образа, который мы собрали ранее
+        imagePullPolicy: Never # ВАЖНО: Говорим k8s искать образ локально, а не в интернете
+---
+# Определяем Service (Сервис) - чтобы получить доступ к подам изнутри кластера
+apiVersion: v1
+kind: Service
+metadata:
+  name: website-checker-service # Имя сервиса
+spec:
+  selector:
+    app: website-checker # Этот сервис направляет трафик на поды с этим лейблом
+  ports:
+    - protocol: TCP
+      port: 80 # Порт, на котором сервис принимает запросы
+      targetPort: 80 # Порт, на который перенаправлять запросы в под (но наш скрипт не слушает порты!)
+  # type: ClusterIP (значение по умолчанию) - сервис доступен только внутри кластера

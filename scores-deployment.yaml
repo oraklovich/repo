@@ -1,0 +1,53 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: scores-parser
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: scores-parser
+  template:
+    metadata:
+      labels:
+        app: scores-parser
+    spec:
+      containers:
+      - name: parser
+        image: scores-parser
+        imagePullPolicy: Never
+        ports:
+        - containerPort: 5001
+        resources:
+          requests:
+            memory: "256Mi"
+            cpu: "250m"
+          limits:
+            memory: "512Mi"
+            cpu: "500m"
+        livenessProbe:
+          httpGet:
+            path: /health
+            port: 5001
+          initialDelaySeconds: 30
+          periodSeconds: 10
+        readinessProbe:
+          httpGet:
+            path: /health
+            port: 5001
+          initialDelaySeconds: 5
+          periodSeconds: 5
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: scores-parser-service
+spec:
+  selector:
+    app: scores-parser
+  ports:
+    - protocol: TCP
+      port: 5001
+      targetPort: 5001
+  type: ClusterIP

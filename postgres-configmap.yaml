@@ -1,0 +1,12 @@
+# postgres-configmap.yaml
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: postgres-config
+data:
+  # Имя базы данных, которую создадим при старте
+  database: "football_db"
+  # Имя пользователя БД
+  user: "football_user"
+  # Имя для сервиса, по которому другие Pod'ы будут находить БД
+  service_name: "postgres-service"

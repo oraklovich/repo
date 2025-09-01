@@ -1,1 +1,7 @@
-requests
+# requirements.txt
+Flask==2.3.3
+psycopg2-binary==2.9.7      # НОВОЕ: для работы с PostgreSQL
+sqlalchemy==2.0.23          # НОВОЕ: для удобной работы с БД
+python-telegram-bot==20.7   # У тебя уже должно быть, но на всякий случай
+beautifulsoup4==4.12.2      # У тебя уже должно быть
+requests==2.31.0            # У тебя уже должно быть
